@@ -25,14 +25,20 @@ provider:
 
 functions:
   hash:
-    handler: src/handler.hash
+    handler: src/handler.hashHandler
     events:
       - http:
           method: post
           path: hash
   url:
-    handler: src/handler.url
+    handler: src/handler.urlHandler
     events:
       - http:
           method: get
           path: url
+  stats:
+    handler: src/handler.statsHandler
+    events:
+      - http:
+          method: post
+          path: stats/url

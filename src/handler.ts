@@ -1,40 +1,41 @@
 // eslint-disable-next-line import/no-unresolved
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
 import 'source-map-support/register';
-import { isURL } from 'validator';
+import { isURL, isIP } from 'validator';
 import shortid from 'shortid';
 
-import { IHashInput, ILink } from './types';
+import { IHashInput, ILink, ILinkStats } from './types';
 import { success, failure } from './utils/lambdaResponses';
-import { addLink, getLinkByHash } from './controllers/linkController';
+import { addLink, getLinkByHash, getStatisticsByURL } from './controllers/linkController';
 import DB from './db';
 
 const { MONGODB_URI } = process.env;
 
-export const hash: APIGatewayProxyHandler = async (event): Promise<APIGatewayProxyResult> => {
-  let body: IHashInput;
+export const hashHandler: APIGatewayProxyHandler = async (event): Promise<APIGatewayProxyResult> => {
+  let url: string;
 
   try {
-    body = JSON.parse(event.body);
+    url = JSON.parse(event.body).url;
   } catch (e) {
-    return <APIGatewayProxyResult>failure(e);
+    return <APIGatewayProxyResult>failure('Malformed request', 400);
   }
 
   const ip: string | boolean = event.requestContext?.identity?.sourceIp;
 
   // validations
-  if (!body.url) return <APIGatewayProxyResult>failure('URL not provided', 400);
-  if (!isURL(body.url)) return <APIGatewayProxyResult>failure('Not a valid URL', 400);
+  if (!url) return <APIGatewayProxyResult>failure('URL not provided', 400);
+  if (!isURL(url)) return <APIGatewayProxyResult>failure('Not a valid URL', 400);
   if (!ip) return <APIGatewayProxyResult>failure('Who are you?', 403);
+  if (!isIP(ip)) return <APIGatewayProxyResult>failure('Nice try', 403);
 
   await DB.init(MONGODB_URI);
-  const newLink: ILink = await addLink(body.url, ip);
-
+  const newLink: ILink = await addLink(url, ip);
   await DB.teardown();
+
   return <APIGatewayProxyResult>success({ hash: newLink.hash });
 };
 
-export const url: APIGatewayProxyHandler = async (event): Promise<APIGatewayProxyResult> => {
+export const urlHandler: APIGatewayProxyHandler = async (event): Promise<APIGatewayProxyResult> => {
   const hashParam: string | boolean = event.queryStringParameters?.hash;
 
   // validations
@@ -48,10 +49,32 @@ export const url: APIGatewayProxyHandler = async (event): Promise<APIGatewayProx
   if (!link) return <APIGatewayProxyResult>failure(`No link with hash ${hashParam}`, 404);
 
   const linkUrl: string = (link as ILink).url;
-
   return <APIGatewayProxyResult>success({ url: linkUrl });
 };
 
-// export const stats: APIGatewayProxyHandler = async event => {};
+export const statsHandler: APIGatewayProxyHandler = async (event): Promise<APIGatewayProxyResult> => {
+  let url: string;
+
+  try {
+    url = JSON.parse(event.body).url;
+  } catch (e) {
+    return <APIGatewayProxyResult>failure('Malformed request', 400);
+  }
+
+  // validations
+  if (!url) return <APIGatewayProxyResult>failure('URL not provided', 400);
+  if (!isURL(url)) return <APIGatewayProxyResult>failure('Not a valid URL', 400);
+
+  await DB.init(MONGODB_URI);
+  const response: ILinkStats | boolean = await getStatisticsByURL(url);
+  await DB.teardown();
+
+  if (!response) return <APIGatewayProxyResult>failure(`Link not found`, 404);
+
+  const statistics = response as ILinkStats;
+  const { hashes, ipAddresses, requests } = statistics;
+
+  return <APIGatewayProxyResult>success({ url, hashes, ipAddresses, requests });
+};
 
 // export const deleteCron: APIGatewayProxyHandler = async event => {};
