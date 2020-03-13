@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "mongoose": "^5.9.4",
+    "pretty-quick": "^2.0.1",
     "shortid": "^2.2.15",
     "source-map-support": "^0.5.10",
     "validator": "^12.2.0"
@@ -29,6 +30,7 @@
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-prettier": "^3.1.2",
     "fork-ts-checker-webpack-plugin": "^3.0.1",
+    "husky": "^4.2.3",
     "jest": "^25.1.0",
     "mongodb-memory-server": "^6.3.2",
     "prettier": "^1.19.1",
@@ -43,7 +45,7 @@
     "webpack": "^4.29.0",
     "webpack-node-externals": "^1.7.2"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "author": "Mihai Blaga",
   "license": "MIT",
   "jest": {
     "preset": "ts-jest",
@@ -59,5 +61,10 @@
       "!**/node_modules/**",
       "!./coverage"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
