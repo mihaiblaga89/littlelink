@@ -5,7 +5,8 @@
   "main": "handler.js",
   "scripts": {
     "test": "jest",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "snyk protect",
+    "deploy-sls": "sls deploy --aws-profile mihaiblaga"
   },
   "dependencies": {
     "moment": "^2.24.0",

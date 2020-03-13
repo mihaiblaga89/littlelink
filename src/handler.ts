@@ -4,9 +4,9 @@ import 'source-map-support/register';
 import { isURL, isIP } from 'validator';
 import shortid from 'shortid';
 
-import { IHashInput, ILink, ILinkStats } from './types';
+import { ILink, ILinkStats } from './types';
 import { success, failure } from './utils/lambdaResponses';
-import { addLink, getLinkByHash, getStatisticsByURL } from './controllers/linkController';
+import { addLink, getLinkByHash, getStatisticsByURL, removeOlderThan } from './controllers/linkController';
 import DB from './db';
 
 const { MONGODB_URI } = process.env;
@@ -77,4 +77,7 @@ export const statsHandler: APIGatewayProxyHandler = async (event): Promise<APIGa
   return <APIGatewayProxyResult>success({ url, hashes, ipAddresses, requests });
 };
 
-// export const deleteCron: APIGatewayProxyHandler = async event => {};
+export const deleteCron = async (): Promise<boolean> => {
+  await removeOlderThan({ years: 1 });
+  return true;
+};

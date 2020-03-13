@@ -19,7 +19,3 @@ export interface ILinkStats {
   ipAddresses: string[];
   requests: number;
 }
-
-export interface IHashInput {
-  url: string;
-}
