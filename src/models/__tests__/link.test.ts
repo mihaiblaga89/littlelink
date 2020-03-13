@@ -1,7 +1,7 @@
 import Link from '../link.model';
 import { ILink } from '../../types';
 
-describe('Link model', () => {
+describe('Link Model', () => {
   it('Should throw validation error', () => {
     expect.assertions(1);
 

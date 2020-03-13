@@ -55,7 +55,7 @@ functions:
           method: post
           path: stats/url
   removeUnused:
-    handler: src/handler.cron
+    handler: src/handler.cronHandler
     events:
       - schedule: cron(0 0 * * ? *)
 # resources:

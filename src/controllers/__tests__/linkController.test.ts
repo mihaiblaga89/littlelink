@@ -9,7 +9,7 @@ import DB from '../../db';
 
 let mongoServer: MongoMemoryServer;
 
-describe('Link model', () => {
+describe('Link Controller', () => {
   beforeAll(async () => {
     mongoServer = new MongoMemoryServer();
     const mongoUri: string = await mongoServer.getUri();
