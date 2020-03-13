@@ -80,5 +80,6 @@ _It shrinks your link_
 #### Deployment to AWS
 
 1. Make sure you have AWS CLI configured
-2. Make sure you replaced `MONGO_URI` with a correct one
-3. run `sls deploy`. Or change the `deploy-sls` script and run that
+2. Make sure the AWS IAM user you have configured in AWS CLI has permissions for Lambda, IAM, S3, CloudWatch, API Gateway and CloudFormation
+3. Make sure you replaced `MONGO_URI` with a correct one
+4. run `sls deploy`. Or change the `deploy-sls` script and run that
