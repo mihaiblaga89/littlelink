@@ -13,6 +13,7 @@ custom:
 plugins:
   - serverless-webpack
   - serverless-offline
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
@@ -23,9 +24,9 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
 
 functions:
-  hello:
-    handler: src/handler.hello
+  hash:
+    handler: src/handler.hash
     events:
       - http:
-          method: get
-          path: hello
+          method: post
+          path: hash

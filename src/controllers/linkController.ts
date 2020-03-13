@@ -3,7 +3,7 @@ import { Query } from 'mongoose';
 import shortid from 'shortid';
 
 import Link from '../models/link.model';
-import { ILink, ILinkStats } from '../types';
+import { ILink, ILinkStats, ILinkModel } from '../types';
 
 export const addLink = (url: string, ipAddress: string): Promise<ILink> => {
   const newLink: ILink = new Link({
@@ -18,40 +18,19 @@ export const getLinkByHash = async (hash: string): Promise<ILink | boolean> => {
   const link: ILink = await Link.findOne({ hash });
   if (!link) return false;
   link.requested += 1;
+  link.usedAt = new Date();
   return link.save();
 };
 
 export const getStatisticsByURL = async (url: string): Promise<ILinkStats | boolean> => {
-  const links: ILink[] = await Link.find({ url });
-
-  if (!links.length) return false;
-
-  const stats: ILinkStats = {
-    url,
-    hashes: [],
-    ipAddresses: [],
-    requests: 0,
-  };
-
-  links.forEach(link => {
-    const { hash, ipAddress, requested } = link;
-
-    // hashes are unique, can be pushed without checking
-    stats.hashes.push(hash);
-
-    if (!stats.ipAddresses.includes(ipAddress)) {
-      stats.ipAddresses.push(ipAddress);
-    }
-
-    stats.requests += requested;
-  });
-
-  return <ILinkStats>stats;
+  const results = await (Link as ILinkModel).getStatistics(url);
+  if (!results.length) return false;
+  return results[0];
 };
 
 export const removeOlderThan = (duration: moment.MomentInputObject): Query<any> => {
   const cutoffDate: Date = moment()
     .subtract(duration)
     .toDate();
-  return Link.deleteMany({ createdAt: { $lt: cutoffDate } });
+  return Link.deleteMany({ usedAt: { $lt: cutoffDate } });
 };
