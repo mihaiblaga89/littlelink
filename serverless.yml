@@ -30,3 +30,9 @@ functions:
       - http:
           method: post
           path: hash
+  url:
+    handler: src/handler.url
+    events:
+      - http:
+          method: get
+          path: url
