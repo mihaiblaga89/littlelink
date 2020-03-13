@@ -1,4 +1,6 @@
-### LittleLink
+# LittleLink
+
+![tests](https://github.com/mihaiblaga89/littlelink/workflows/tests/badge.svg?branch=master)
 
 _It shrinks your link_
 
