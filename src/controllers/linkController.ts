@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { Query } from 'mongoose';
 import shortid from 'shortid';
 
@@ -28,9 +27,8 @@ export const getStatisticsByURL = async (url: string): Promise<ILinkStats | bool
   return results[0];
 };
 
-export const removeOlderThan = (duration: moment.MomentInputObject): Query<any> => {
-  const cutoffDate: Date = moment()
-    .subtract(duration)
-    .toDate();
+export const removeOlderThan = (years: number): Query<any> => {
+  const now = new Date();
+  const cutoffDate = now.setFullYear(now.getFullYear() - years);
   return Link.deleteMany({ usedAt: { $lt: cutoffDate } });
 };

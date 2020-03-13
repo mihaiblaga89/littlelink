@@ -81,7 +81,7 @@ export const statsHandler: APIGatewayProxyHandler = async (event): Promise<APIGa
 export const cronHandler = async (): Promise<boolean> => {
   const { MONGODB_URI } = process.env;
   await DB.init(MONGODB_URI);
-  await removeOlderThan({ years: 1 });
+  await removeOlderThan(1);
   await DB.teardown();
   return true;
 };

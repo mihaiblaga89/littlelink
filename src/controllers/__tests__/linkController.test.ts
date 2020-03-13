@@ -1,6 +1,5 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import shortid from 'shortid';
-import moment from 'moment';
 
 import { addLink, getLinkByHash, getStatisticsByURL, removeOlderThan } from '../linkController';
 import { ILink, ILinkStats } from '../../types';
@@ -63,20 +62,19 @@ describe('Link Controller', () => {
 
   it('Should delete links older than 1 year', async () => {
     expect.assertions(1);
-
+    const now = new Date();
+    const usedAt = now.setFullYear(now.getFullYear() - 2);
     const forgedLink: ILink = new Link({
       url: 'forgedDate.com',
       hash: 'forgedHash',
       ipAddress: '1.2.3.4',
       requested: 0,
-      usedAt: moment()
-        .subtract({ years: 2 })
-        .toDate(),
+      usedAt,
     });
     await forgedLink.save();
 
     // clean it up
-    await removeOlderThan({ years: 1 });
+    await removeOlderThan(1);
 
     // shouldn't exist anymore
     const exists: boolean = (await getLinkByHash('forgedHash')) as boolean;
