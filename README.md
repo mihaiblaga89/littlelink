@@ -59,7 +59,7 @@ _It shrinks your link_
 
    response
 
-   ```json
+   ```javascript
    {
         "url": "example.com",
         "hashes": ["fkwKwr", "gown2s" ....],
