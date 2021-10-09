@@ -24,6 +24,10 @@ jobs:
         with:
           args: >
             -Dsonar.verbose=true
+            -Dsonar.pullrequest.key=${{ github.event.number  }}
+            -Dsonar.pullrequest.base=$GITHUB_BASE_REF
+            -Dsonar.pullrequest.provider=github
+            -Dsonar.pullrequest.branch=$GITHUB_HEAD_REF
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
