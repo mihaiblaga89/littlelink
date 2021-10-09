@@ -7,57 +7,29 @@ on:
     branches:
       - "feat/*"
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - run: printenv
-#       - uses: actions/checkout@v2
-#         with:
-#           # Disabling shallow clone is recommended for improving relevancy of reporting
-#           fetch-depth: 0
-#       - uses: actions/setup-node@v1
-#         with:
-#           node-version: 12
-#       - run: yarn
-#       - run: yarn test
-#       - uses: sonarsource/sonarqube-scan-action@master
-#         with:
-#           args: >
-#             -Dsonar.verbose=true
-#             -Dsonar.pullrequest.key=${{ github.event.number  }}
-#             -Dsonar.pullrequest.base=${{ github.base_ref  }}
-#             -Dsonar.pullrequest.provider=github
-#             -Dsonar.pullrequest.branch=${{ github.head_ref  }}
-#         env:
-#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 jobs:
-  one:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJSON(job) }}
-        run: echo "$JOB_CONTEXT"
+      - run: printenv
+      - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn
+      - run: yarn test
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
-      - run: echo ${{ steps.extract_branch.outputs.branch }}
-      - name: Dump runner context
+      - uses: sonarsource/sonarqube-scan-action@master
+        with:
+          args: >
+            -Dsonar.verbose=true
+            -Dsonar.branch.name=${{ steps.extract_branch.outputs.branch }}
         env:
-          RUNNER_CONTEXT: ${{ toJSON(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
