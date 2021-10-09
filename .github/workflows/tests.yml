@@ -1,18 +1,33 @@
 name: tests
 
-on: [push]
+on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request.
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - run: printenv
+      - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
       - uses: actions/setup-node@v1
         with:
           node-version: 12
       - run: yarn
       - run: yarn test
       - uses: sonarsource/sonarqube-scan-action@master
+        with:
+          args: >
+            -Dsonar.verbose=true
+            -Dsonar.pullrequest.key=${{ github.event.number  }}
+            -Dsonar.pullrequest.base=${{ github.base_ref  }}
+            -Dsonar.pullrequest.provider=github
+            -Dsonar.pullrequest.branch=${{ github.head_ref  }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
