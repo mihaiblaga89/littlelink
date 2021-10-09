@@ -5,7 +5,7 @@ on:
   # a pull request
   push:
     branches:
-      - "*"
+      - "feat/*"
 
 # jobs:
 #   build:
