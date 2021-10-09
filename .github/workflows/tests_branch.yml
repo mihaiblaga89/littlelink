@@ -1,0 +1,35 @@
+# name: tests
+
+# on:
+#   # Trigger analysis when pushing in master or pull requests, and when creating
+#   # a pull request
+#   push:
+#     branches:
+#       - "feat/*"
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: printenv
+#       - uses: actions/checkout@v2
+#         with:
+#           # Disabling shallow clone is recommended for improving relevancy of reporting
+#           fetch-depth: 0
+#       - uses: actions/setup-node@v1
+#         with:
+#           node-version: 12
+#       - run: yarn
+#       - run: yarn test
+#       - name: Extract branch name
+#         shell: bash
+#         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+#         id: extract_branch
+#       - uses: sonarsource/sonarqube-scan-action@master
+#         with:
+#           args: >
+#             -Dsonar.verbose=true
+#             -Dsonar.branch.name=${{ steps.extract_branch.outputs.branch }}
+#         env:
+#           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
