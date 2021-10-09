@@ -20,6 +20,10 @@ jobs:
           node-version: 12
       - run: yarn
       - run: yarn test
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - uses: sonarsource/sonarqube-scan-action@master
         with:
           args: >
@@ -28,6 +32,7 @@ jobs:
             -Dsonar.pullrequest.base=${{ github.base_ref  }}
             -Dsonar.pullrequest.provider=github
             -Dsonar.pullrequest.branch=${{ github.head_ref  }}
+            -Dsonar.branch.name=${{ steps.extract_branch.outputs.branch }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
