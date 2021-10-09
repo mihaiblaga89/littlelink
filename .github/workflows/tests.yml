@@ -11,8 +11,13 @@ jobs:
         with:
           node-version: 12
       - run: yarn
+      - run: printenv
       - run: yarn test
       - uses: sonarsource/sonarqube-scan-action@master
+        with:
+          projectBaseDir: app/src
+          args: >
+            -Dsonar.verbose=true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
