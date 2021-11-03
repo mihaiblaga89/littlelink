@@ -13,7 +13,7 @@
     "pretty-quick": "^2.0.1",
     "shortid": "^2.2.15",
     "source-map-support": "^0.5.10",
-    "validator": "^12.2.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
